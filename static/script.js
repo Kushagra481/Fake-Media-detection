@@ -20,73 +20,115 @@ if (menuButton && mobileMenu) {
   });
 }
 
-// Tab switching functionality (Only if tabs exist)
+// Tab switching functionality
 const tabs = document.querySelectorAll("[data-tab]");
 const contentAreas = document.querySelectorAll(".content-area");
 
 if (tabs.length > 0) {
+  // Set initial state - first tab active
+  tabs[0].classList.add('tab-active');
+  tabs[0].classList.remove('text-gray-400');
+  document.getElementById('textArea').classList.remove('hidden');
+
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      tabs.forEach((t) => t.classList.remove("tab-active", "text-gray-400"));
+      // Remove active state from all tabs
+      tabs.forEach((t) => {
+        t.classList.remove("tab-active");
+        t.classList.add("text-gray-400");
+      });
+
+      // Add active state to clicked tab
       tab.classList.add("tab-active");
+      tab.classList.remove("text-gray-400");
 
-      contentAreas.forEach((area) => area.classList.add("hidden"));
-      document.getElementById(`${tab.dataset.tab}Area`).classList.remove("hidden");
+      // Hide all content areas
+      contentAreas.forEach((area) => {
+        area.classList.add("hidden");
+      });
 
-      document.getElementById("resultsArea").classList.add("hidden");
+      // Show selected content area
+      const targetArea = document.getElementById(`${tab.dataset.tab}Area`);
+      if (targetArea) {
+        targetArea.classList.remove("hidden");
+      }
+
+      // Hide results when switching tabs
+      const resultsArea = document.getElementById("resultsArea");
+      if (resultsArea) {
+        resultsArea.classList.add("hidden");
+      }
     });
   });
 }
 
-// File upload handling (Only if input elements exist)
-document.querySelectorAll('input[type="file"]').forEach((input) => {
-  input.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const uploadArea = e.target.closest(".upload-area");
-      const preview = document.createElement(
-        input.accept.includes("video") ? "video" : "audio"
-      );
-      preview.controls = true;
-      preview.src = URL.createObjectURL(file);
-      preview.className = "w-full h-full";
-      uploadArea.innerHTML = "";
-      uploadArea.appendChild(preview);
-    }
-  });
+// File upload handling
+const fileInputs = document.querySelectorAll('input[type="file"]');
+fileInputs.forEach(input => {
+  const uploadArea = input.closest('.upload-area');
+  if (uploadArea) {
+    uploadArea.addEventListener('click', () => {
+      input.click();
+    });
+
+    input.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        const fileName = e.target.files[0].name;
+        const fileInfo = uploadArea.querySelector('.text-sm');
+        if (fileInfo) {
+          fileInfo.textContent = `Selected: ${fileName}`;
+        }
+      }
+    });
+  }
 });
 
 // Analysis functionality (Only if analyzeBtn exists)
-const analyzeBtn = document.getElementById("analyzeBtn");
+const analyzeBtn = document.getElementById('analyzeBtn');
 if (analyzeBtn) {
-  analyzeBtn.addEventListener("click", () => {
-    const resultsArea = document.getElementById("resultsArea");
-    const resultTitle = document.getElementById("resultTitle");
-    const confidenceValue = document.getElementById("confidenceValue");
-    const indicatorsList = document.getElementById("indicatorsList");
+    analyzeBtn.addEventListener('click', async () => {
+        // Show loading state
+        analyzeBtn.textContent = 'Analyzing...';
+        analyzeBtn.disabled = true;
 
-    resultsArea.classList.add("hidden");
-    analyzeBtn.textContent = "Analyzing...";
-    analyzeBtn.disabled = true;
+        try {
+            const response = await fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: 'text', // or 'audio' or 'video' based on active tab
+                    content: document.querySelector('textarea').value
+                })
+            });
 
-    setTimeout(() => {
-      const isFake = Math.random() > 0.5;
-      const confidence = (Math.random() * 40 + 60).toFixed(1);
-      const indicators = [
-        "Pattern inconsistency detected",
-        "Unusual content structure",
-        "Algorithmic anomalies found",
-      ];
+            const data = await response.json();
 
-      resultTitle.textContent = isFake ? "Potentially Fake Content" : "Likely Genuine Content";
-      confidenceValue.textContent = `${confidence}%`;
-      indicatorsList.innerHTML = indicators.map((i) => `<li>${i}</li>`).join("");
-
-      resultsArea.classList.remove("hidden");
-      analyzeBtn.textContent = "Analyze Content";
-      analyzeBtn.disabled = false;
-    }, 2000);
-  });
+            // Show results area
+            const resultsArea = document.getElementById('resultsArea');
+            if (resultsArea) {
+                resultsArea.classList.remove('hidden');
+                
+                // Update results
+                document.getElementById('resultTitle').textContent = 'Analysis Complete';
+                document.getElementById('confidenceValue').textContent = data.confidence;
+                
+                // Update indicators
+                const indicatorsList = document.getElementById('indicatorsList');
+                indicatorsList.innerHTML = data.indicators
+                    .map(indicator => `<li>${indicator}</li>`)
+                    .join('');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Handle error state
+        } finally {
+            // Reset button
+            analyzeBtn.textContent = 'Analyze Content';
+            analyzeBtn.disabled = false;
+        }
+    });
 }
 
 // 3D Title Animation (Only if title exists)
@@ -139,3 +181,20 @@ if (heroCard) {
     heroCard.style.transform = "rotateX(0) rotateY(0) translateZ(20px)";
   });
 }
+
+// Get Started button scroll functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const getStartedBtn = document.getElementById('getStartedBtn');
+    
+    if (getStartedBtn) {
+        getStartedBtn.addEventListener('click', () => {
+            const contentAnalysis = document.getElementById('contentAnalysis');
+            if (contentAnalysis) {
+                contentAnalysis.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    }
+});
