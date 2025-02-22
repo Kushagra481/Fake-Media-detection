@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeepTruth - Fake Content Detection</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body class="gradient-bg min-h-screen text-white">
+    <!-- Navigation -->
+    <nav class="bg-gray-900 border-b border-gray-800">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16 items-center">
+          <div class="text-xl font-bold site-title">DeepTruth</div>
+          <div class="hidden md:flex space-x-4">
+            <a href="{{ url_for('index') }}" class="text-gray-300 hover:text-white">Home</a>
+            <a href="{{ url_for('about') }}" class="text-gray-300 hover:text-white">About Us</a>
+          </div>
+          <button class="md:hidden text-gray-300" id="menuButton">
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="md:hidden hidden" id="mobileMenu">
+        <a href="{{ url_for('index') }}" class="block px-4 py-2 text-gray-300 hover:text-white"
+          >Home</a
+        >
+        <a href="{{ url_for('about') }}" class="block px-4 py-2 text-gray-300 hover:text-white"
+          >About Us</a
+        >
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-bg py-24">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+          <div class="max-w-7xl mx-auto px-4">
+            <div class="hero-content-3d text-center">
+              <!-- 3D Hero Card -->
+              <div class="hero-card mb-12">
+                <!-- 3D Title -->
+                <h1 class="hero-title-3d text-4xl md:text-6xl font-bold mb-8">
+                  <span>D</span><span>e</span><span>e</span><span>p</span>
+                  <span>T</span><span>r</span><span>u</span><span>t</span
+                  ><span>h</span>
+                </h1>
+
+                <p class="text-lg text-gray-300 mb-8">
+                  Advanced AI-powered detection system for identifying
+                  manipulated content
+                </p>
+
+                <!-- 3D Button -->
+                <button
+                  class="button-3d bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg"
+                >
+                  Get Started
+                </button>
+              </div>
+
+              <!-- Floating 3D Cards -->
+              <div class="flex justify-center gap-8">
+                <div class="floating-card">
+                  <div class="card-face">
+                    <svg
+                      class="w-12 h-12"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="card-face card-back">
+                    <span>Verify</span>
+                  </div>
+                </div>
+
+                <div class="floating-card" style="animation-delay: -2s">
+                  <div class="card-face">
+                    <svg
+                      class="w-12 h-12"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M shield-check"
+                      />
+                    </svg>
+                  </div>
+                  <div class="card-face card-back">
+                    <span>Protect</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto p-6">
+      <div class="glass-card rounded-lg p-6">
+        <h2 class="text-2xl font-bold text-center mb-8">Content Analysis</h2>
+
+        <!-- Tabs -->
+        <div class="flex border-b border-gray-700 mb-6">
+          <button class="px-4 py-2 tab-active" data-tab="text">Text</button>
+          <button class="px-4 py-2 text-gray-400" data-tab="audio">
+            Audio
+          </button>
+          <button class="px-4 py-2 text-gray-400" data-tab="video">
+            Video
+          </button>
+        </div>
+
+        <!-- Content Areas -->
+        <div id="textArea" class="content-area">
+          <textarea
+            class="w-full h-32 p-2 rounded-md bg-gray-800 border border-gray-700"
+            placeholder="Paste the text content you want to analyze..."
+          ></textarea>
+        </div>
+
+        <div id="audioArea" class="content-area hidden">
+          <div
+            class="upload-area h-32 rounded-md flex items-center justify-center"
+          >
+            <div class="text-center">
+              <svg
+                class="w-8 h-8 mb-2 mx-auto text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                />
+              </svg>
+              <span class="text-sm text-gray-500">Upload audio file</span>
+              <input type="file" class="hidden" accept="audio/*" />
+            </div>
+          </div>
+        </div>
+
+        <div id="videoArea" class="content-area hidden">
+          <div
+            class="upload-area h-64 rounded-md flex items-center justify-center"
+          >
+            <div class="text-center">
+              <svg
+                class="w-8 h-8 mb-2 mx-auto text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                />
+              </svg>
+              <span class="text-sm text-gray-500">Upload video file</span>
+              <input type="file" class="hidden" accept="video/*" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Analysis Button -->
+        <button
+          id="analyzeBtn"
+          class="w-full mt-6 py-2 px-4 bg-blue-500 hover:bg-blue-600 rounded-md font-semibold transition-colors duration-200"
+        >
+          Analyze Content
+        </button>
+
+        <!-- Results Area -->
+        <div id="resultsArea" class="mt-6 hidden">
+          <div class="bg-gray-800 rounded-md p-4">
+            <div class="flex items-center gap-2 mb-4">
+              <svg
+                class="w-6 h-6 text-yellow-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span class="font-bold" id="resultTitle"></span>
+            </div>
+            <div class="mb-2">
+              <span class="font-semibold">Confidence: </span>
+              <span id="confidenceValue"></span>
+            </div>
+            <div>
+              <span class="font-semibold">Key Indicators:</span>
+              <ul class="list-disc list-inside mt-1" id="indicatorsList"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
